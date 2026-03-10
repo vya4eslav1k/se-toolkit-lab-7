@@ -10,7 +10,7 @@ Build an ETL pipeline that fetches data from an external API and loads it into t
 
 <h4>Context</h4>
 
-The database starts empty. We can get anonymized data on task completions in Autochecker API. Your job is to build a pipeline that fetches this data and populates your database so the system can serve it through existing endpoints to display as analytics.
+The database starts empty. We can get anonymized data on task completions in `Autochecker` API. Your job is to build a pipeline that fetches this data and populates your database so the system can serve it through existing endpoints to display as analytics.
 
 <h4>Diagram</h4>
 
@@ -113,7 +113,7 @@ Follow the [`Git workflow`](../../../wiki/git-workflow.md) to complete this task
 - [1.3.2. Fetch check logs](#132-fetch-check-logs)
 - [1.3.3. Test incremental sync](#133-test-incremental-sync)
 
-Before writing code, let's explore the Autochecker API.
+Before writing code, let's explore the `Autochecker` API.
 
 The API has HTTP Basic Auth, we'll use `curl` to send requests.
 
@@ -129,7 +129,7 @@ The API has HTTP Basic Auth, we'll use `curl` to send requests.
      "https://auche.namaz.live/api/items"
    ```
 
-   Replace `<your-email>` and `<github-username><telegram-alias>` with the credentials you entered in Autochecker bot.
+   Replace `<your-email>` and `<github-username><telegram-alias>` with the credentials you entered in `Autochecker` bot.
 
    You should see a `JSON` array of labs and tasks from this course:
 
@@ -299,7 +299,7 @@ The code stubs in `backend/app/etl.py` contain detailed TODOs.
    }
    ```
 
-   The exact numbers depend on how many check results exist in the Autochecker.
+   The exact numbers depend on how many check results exist in the `Autochecker`.
 
    <details><summary><b>Troubleshooting (click to open)</b></summary>
 
@@ -319,13 +319,11 @@ The code stubs in `backend/app/etl.py` contain detailed TODOs.
    3. Apply the fix, rebuild (`docker compose --env-file .env.docker.secret up --build -d`), and try again.
    4. Repeat this cycle 2–3 times. AI agents often make mistakes with field names, imports, or database constraints on the first try. Each iteration gets you closer.
 
-   <h4>401 Unauthorized from the Autochecker API</h4>
+   <h4>401 Unauthorized from the <code>Autochecker</code> API</h4>
 
    Check that [`AUTOCHECKER_EMAIL`](../../../wiki/dotenv-docker-secret.md#autochecker_email) and [`AUTOCHECKER_PASSWORD`](../../../wiki/dotenv-docker-secret.md#autochecker_password) are set correctly in [`.env.docker.secret`](../../../wiki/dotenv-docker-secret.md#what-is-envdockersecret). The password is `<github-username><telegram-alias>` (no spaces, no `@`).
 
-   <h4>500 Internal Server Error</h4>
-
-   <h4>Connection refused to the autochecker API</h4>
+   <h4>Connection refused to the <code>Autochecker</code> API</h4>
 
    Verify that [`AUTOCHECKER_API_URL`](../../../wiki/dotenv-docker-secret.md#autochecker_api_url) is set to `https://auche.namaz.live` in [`.env.docker.secret`](../../../wiki/dotenv-docker-secret.md#what-is-envdockersecret).
 
@@ -388,7 +386,7 @@ The code stubs in `backend/app/etl.py` contain detailed TODOs.
 
 #### 1.4.7. Update and test on the VM
 
-1. To pull your branch and restart the services on your VM,
+1. To update to your task branch on the VM,
 
    [run in the `VS Code Terminal`](../../../wiki/vs-code.md#run-a-command-in-the-vs-code-terminal):
 
@@ -397,21 +395,28 @@ The code stubs in `backend/app/etl.py` contain detailed TODOs.
    git fetch origin
    git checkout <task-branch>
    git pull origin <task-branch>
-   docker compose --env-file .env.docker.secret up --build -d
    ```
 
    Replace [`<task-branch>`](../../../wiki/git-workflow.md#task-branch).
 
-2. Open [`Swagger UI`](../../../wiki/swagger.md#open-swagger-ui) at `http://<your-vm-ip-address>:<caddy-port>/docs`.
+2. To rebuild and start the services,
+
+   [run in the `VS Code Terminal`](../../../wiki/vs-code.md#run-a-command-in-the-vs-code-terminal):
+
+   ```terminal
+   docker compose --env-file .env.docker.secret up --build -d
+   ```
+
+3. Open [`Swagger UI`](../../../wiki/swagger.md#open-swagger-ui) at `http://<your-vm-ip-address>:<caddy-port>/docs`.
 
    Replace:
 
    - `<your-vm-ip-address>` with your VM's IP address.
    - `<caddy-port>` with the value of [`CADDY_HOST_PORT`](../../../wiki/dotenv-docker-secret.md#caddy_host_port) in [`.env.docker.secret`](../../../wiki/dotenv-docker-secret.md#what-is-envdockersecret) (default: `42002`).
 
-3. Authorize with your [`API_KEY`](../../../wiki/dotenv-docker-secret.md#api_key).
+4. Authorize with your [`API_KEY`](../../../wiki/dotenv-docker-secret.md#api_key).
 
-4. Run `POST /pipeline/sync` once.
+5. Run `POST /pipeline/sync` once.
 
    You should get `200` with `new_records` and `total_records`.
 

@@ -76,8 +76,8 @@ No issues found.
 
 ### 4.2. Terminal commands
 
-1. **[Medium]** Lines 391–401: Git commands (`cd`, `git fetch`, `git checkout`, `git pull`) and `docker compose up --build -d` are combined in a single terminal block under one "To pull your branch and restart the services on your VM" intention. Convention (tasks.md Section 3, line 194) explicitly states: "`git pull` (version control) and `docker compose up` (container management) must be separate steps even when run in sequence."
-   **Suggested fix:** Split into two steps — one for git operations ("To update to your task branch on the VM") and one for Docker ("To rebuild and start the services").
+1. ~~**[Medium]** Lines 391–401: Git commands (`cd`, `git fetch`, `git checkout`, `git pull`) and `docker compose up --build -d` are combined in a single terminal block under one "To pull your branch and restart the services on your VM" intention. Convention (tasks.md Section 3, line 194) explicitly states: "`git pull` (version control) and `docker compose up` (container management) must be separate steps even when run in sequence."
+   **Suggested fix:** Split into two steps — one for git operations ("To update to your task branch on the VM") and one for Docker ("To rebuild and start the services").~~
 
 ### 4.3. Command Palette commands
 
@@ -141,12 +141,12 @@ Not applicable.
 
 ### 4.18. Inline formatting of technical terms
 
-1. **[Medium]** Line 13: "Autochecker API" — `Autochecker` is a tool name and must be backticked: `` `Autochecker` API ``.
-2. **[Medium]** Line 116: "the Autochecker API" — same issue: `` the `Autochecker` API ``.
-3. **[Medium]** Line 132: "Autochecker bot" — same issue: `` `Autochecker` bot ``.
-4. **[Low]** Line 302: "the Autochecker" — same issue: `` the `Autochecker` ``.
-5. **[Low]** Line 322: Inside `<h4>` tag, "Autochecker" should use `<code>Autochecker</code>` (backticks don't render inside HTML tags).
-6. **[Medium]** Line 328: "autochecker" is both lowercase and unformatted inside `<h4>` tag. Should be `<code>Autochecker</code>` with correct capitalization.
+1. ~~**[Medium]** Line 13: "Autochecker API" — `Autochecker` is a tool name and must be backticked: `` `Autochecker` API ``.~~
+2. ~~**[Medium]** Line 116: "the Autochecker API" — same issue: `` the `Autochecker` API ``.~~
+3. ~~**[Medium]** Line 132: "Autochecker bot" — same issue: `` `Autochecker` bot ``.~~
+4. ~~**[Low]** Line 302: "the Autochecker" — same issue: `` the `Autochecker` ``.~~
+5. ~~**[Low]** Line 322: Inside `<h4>` tag, "Autochecker" should use `<code>Autochecker</code>` (backticks don't render inside HTML tags).~~
+6. ~~**[Medium]** Line 328: "autochecker" is both lowercase and unformatted inside `<h4>` tag. Should be `<code>Autochecker</code>` with correct capitalization.~~
 
 ### 4.19. Steps with sub-steps
 
@@ -187,8 +187,8 @@ Not applicable.
 
 ### Recovery guidance (tasks.md 4.19)
 
-1. **[High]** Line 326: Duplicate empty `<h4>500 Internal Server Error</h4>` heading inside the troubleshooting block. This heading has no content — it is immediately followed by `<h4>Connection refused to the autochecker API</h4>` on line 328. Appears to be an editing artifact.
-   **Suggested fix:** Remove the duplicate empty `<h4>500 Internal Server Error</h4>` on line 326.
+1. ~~**[High]** Line 326: Duplicate empty `<h4>500 Internal Server Error</h4>` heading inside the troubleshooting block. This heading has no content — it is immediately followed by `<h4>Connection refused to the autochecker API</h4>` on line 328. Appears to be an editing artifact.
+   **Suggested fix:** Remove the duplicate empty `<h4>500 Internal Server Error</h4>` on line 326.~~
 
 ---
 
@@ -200,7 +200,7 @@ No TODOs found.
 
 ## Empty sections
 
-1. Line 326: `<h4>500 Internal Server Error</h4>` — empty heading inside the troubleshooting block (immediately followed by `<h4>Connection refused to the autochecker API</h4>` with no content in between).
+1. ~~Line 326: `<h4>500 Internal Server Error</h4>` — empty heading inside the troubleshooting block (immediately followed by `<h4>Connection refused to the autochecker API</h4>` with no content in between).~~
 
 ---
 
@@ -211,11 +211,11 @@ No TODOs found.
 | Conceptual [High] | 0 |
 | Conceptual [Medium] | 3 |
 | Conceptual [Low] | 3 |
-| Convention [High] | 1 |
-| Convention [Medium] | 5 |
-| Convention [Low] | 4 |
+| Convention [High] | 0 |
+| Convention [Medium] | 0 |
+| Convention [Low] | 2 |
 | TODOs | 0 |
-| Empty sections | 1 |
-| **Total** | **17** |
+| Empty sections | 0 |
+| **Total** | **8** |
 
-**Overall:** The task is well-structured with good progression (Part A explores the API before Part B builds the pipeline), an accurate ToC, proper checkpoints with expected output, and a solid troubleshooting block. The most critical issue is a duplicate empty `<h4>500 Internal Server Error</h4>` heading (line 326) that appears to be an editing artifact. The main conceptual concern is that step 1.4.2 relies entirely on an AI coding agent without providing a non-AI alternative or explicitly stating that AI is required, violating the LLM-independence principle (convention 4.16). Several instances of "Autochecker" lack backtick formatting (lines 13, 116, 132, 302, 322, 328), and git/docker commands are mixed in a single terminal block in step 1.4.7. Fixing the High-severity duplicate heading, addressing the LLM-independence gap, and adding backticks to "Autochecker" references would bring the task into good shape.
+**Overall:** The remaining issues are all conceptual (author decisions required) plus two low-severity convention findings. The main conceptual concern is that step 1.4.2 relies entirely on an AI coding agent without providing a non-AI alternative or explicitly stating that AI is required (D8). Step 1.2 includes branch creation instructions that the template reserves for a dedicated step (Section 1 finding), and one borderline compound instruction in step 1.4.3 could optionally be split (4.1 finding). All high and medium convention violations have been fixed.

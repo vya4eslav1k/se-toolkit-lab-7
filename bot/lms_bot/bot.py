@@ -23,6 +23,7 @@ from handlers import (
     handle_health,
     handle_labs,
     handle_scores,
+    handle_natural_language,
 )
 from lms_bot.config import load_config
 
@@ -37,16 +38,19 @@ logger = logging.getLogger(__name__)
 def handle_command(command: str) -> str:
     """
     Route a command string to the appropriate handler.
-    
+
     This is the core routing logic that works in both --test mode
     and production Telegram mode.
+
+    Slash commands (/start, /help, etc.) are handled directly.
+    Other messages are treated as natural language queries.
     """
     parts = command.strip().split()
     if not parts:
         return "Empty command"
-    
+
     cmd = parts[0].lower()
-    
+
     if cmd == "/start":
         return handle_start()
     elif cmd == "/help":
@@ -58,8 +62,11 @@ def handle_command(command: str) -> str:
     elif cmd == "/scores":
         lab_name = parts[1] if len(parts) > 1 else ""
         return handle_scores(lab_name)
-    else:
+    elif cmd.startswith("/"):
         return f"Unknown command: {cmd}. Use /help for available commands."
+    else:
+        # Natural language query - use LLM intent routing
+        return handle_natural_language(command)
 
 
 def run_test_mode(command: str) -> None:

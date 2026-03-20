@@ -75,21 +75,60 @@ def handle_scores(lab_name: str = "") -> str:
     """Handle /scores command - view scores for a lab."""
     if not lab_name:
         return "Please specify a lab name, e.g., /scores lab-04"
-    
+
     client = _get_api_client()
     try:
         pass_rates = client.get_pass_rates(lab_name)
-        
+
         if not pass_rates:
             return f"No scores found for '{lab_name}'."
-        
+
         lines = [f"Pass rates for {lab_name}:"]
         for task in pass_rates:
             task_name = task.get("task", "Unknown task")
             avg_score = task.get("avg_score", 0)
             attempts = task.get("attempts", 0)
             lines.append(f"- {task_name}: {avg_score:.1f}% ({attempts} attempts)")
-        
+
         return "\n".join(lines)
     except LmsApiError as e:
         return f"Backend error: {e.message}"
+
+
+def handle_start() -> str:
+    """Handle /start command - welcome message with keyboard hint."""
+    return """Welcome to the LMS Bot! I can help you with:
+
+• Slash commands: /health, /labs, /scores <lab>
+• Natural language questions like:
+  - "what labs are available?"
+  - "show me scores for lab 4"
+  - "which lab has the lowest pass rate?"
+
+Use /help for more information."""
+
+
+def get_start_keyboard():
+    """Get inline keyboard buttons for the /start command."""
+    return [
+        [{"text": "📊 Check Health", "callback_data": "health"}],
+        [{"text": "📚 View Labs", "callback_data": "labs"}],
+        [{"text": "🏆 Lab 04 Scores", "callback_data": "scores_lab-04"}],
+        [{"text": "❓ Help", "callback_data": "help"}],
+    ]
+
+
+def handle_natural_language(message: str) -> str:
+    """
+    Handle natural language queries using LLM intent routing.
+
+    The LLM decides which tools to call based on the user's message.
+    Tool results are fed back to the LLM for final answer generation.
+    """
+    from handlers.slash.intent_router import IntentRouter
+
+    try:
+        router = IntentRouter()
+        return router.route(message)
+    except Exception as e:
+        return f"Error processing query: {type(e).__name__}: {e}"

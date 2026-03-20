@@ -6,6 +6,8 @@ from .slash.commands import (
     handle_health,
     handle_labs,
     handle_scores,
+    handle_natural_language,
+    get_start_keyboard,
 )
 
 __all__ = [
@@ -14,4 +16,6 @@ __all__ = [
     "handle_health",
     "handle_labs",
     "handle_scores",
+    "handle_natural_language",
+    "get_start_keyboard",
 ]

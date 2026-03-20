@@ -1,6 +1,6 @@
-"""Handler modules for the LMS bot."""
+"""Slash command handlers."""
 
-from .slash.commands import (
+from .commands import (
     handle_start,
     handle_help,
     handle_health,

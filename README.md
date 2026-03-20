@@ -91,3 +91,92 @@ By the end of this lab, you should be able to say:
 2. [Backend Integration](./lab/tasks/required/task-2.md) — P0: slash commands + real data
 3. [Intent-Based Natural Language Routing](./lab/tasks/required/task-3.md) — P1: LLM tool use
 4. [Containerize and Document](./lab/tasks/required/task-4.md) — P3: containerize + deploy
+
+## Deploy
+
+### Prerequisites
+
+- VM with Docker and Docker Compose installed
+- Backend already deployed and running (see [lab setup](./lab/setup/setup-simple.md#lab-setup))
+- Telegram bot token from [@BotFather](https://t.me/BotFather)
+- LLM API credentials (Qwen Code API or compatible)
+
+### Environment variables
+
+Create `.env.docker.secret` on your VM with the following variables:
+
+```bash
+# Telegram bot token (from @BotFather)
+BOT_TOKEN=your-telegram-bot-token
+
+# LMS Backend URL (Docker service name, not localhost)
+LMS_API_URL=http://backend:8000
+LMS_API_KEY=your-lms-api-key
+
+# LLM API credentials
+LLM_API_KEY=your-qwen-api-key
+LLM_API_BASE_URL=http://host.docker.internal:42005/v1
+LLM_API_MODEL=coder-model
+```
+
+> **Note:** The LLM API uses `host.docker.internal` because the Qwen Code API proxy runs on a separate Docker network. The `extra_hosts` configuration in `docker-compose.yml` enables this.
+
+### Deploy commands
+
+1. **Stop any running bot process:**
+   ```bash
+   cd ~/se-toolkit-lab-7
+   pkill -f "bot.py" 2>/dev/null
+   ```
+
+2. **Start all services:**
+   ```bash
+   docker compose --env-file .env.docker.secret up --build -d
+   ```
+
+3. **Check service status:**
+   ```bash
+   docker compose --env-file .env.docker.secret ps
+   ```
+   You should see `bot` running alongside `backend`, `postgres`, and `caddy`.
+
+4. **Check bot logs:**
+   ```bash
+   docker compose --env-file .env.docker.secret logs bot --tail 30
+   ```
+   Look for:
+   - "Starting bot with token..." — bot started
+   - "Bot is now polling for messages..." — connected to Telegram
+   - No Python tracebacks
+
+### Verify in Telegram
+
+Send these messages to your bot in Telegram:
+
+1. `/start` — Welcome message with inline keyboard buttons
+2. `/health` — Backend status (e.g., "Backend is healthy. 50 items available.")
+3. "what labs are available?" — Natural language query listing all labs
+4. "which lab has the lowest pass rate?" — Multi-step reasoning with comparison
+
+### Troubleshooting
+
+| Symptom | Solution |
+|---------|----------|
+| Bot container keeps restarting | Check logs: `docker compose logs bot`. Usually missing env var or import error. |
+| `/health` fails | Ensure `LMS_API_URL=http://backend:8000` (not `localhost`). Inside Docker, `localhost` is the container itself. |
+| LLM queries fail | Ensure `LLM_API_BASE_URL` uses `host.docker.internal` (not `localhost`). |
+| "BOT_TOKEN is required" | Add `BOT_TOKEN` to `.env.docker.secret`. |
+| Build fails at `uv sync` | Ensure `uv.lock` is copied in Dockerfile. |
+
+### Stop and remove
+
+```bash
+# Stop bot only
+docker compose --env-file .env.docker.secret stop bot
+
+# Stop all services
+docker compose --env-file .env.docker.secret down
+
+# Remove volumes (WARNING: deletes database)
+docker compose --env-file .env.docker.secret down -v
+```
